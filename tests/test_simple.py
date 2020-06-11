@@ -301,6 +301,24 @@ class TestSimple(TestCase):
         }
         self.assertEqual(result, expected)
 
+    def test_ilike_in_where(self):
+        result = parse("select a from table1 where A ilike '%20%'")
+        expected = {
+            'from': 'table1',
+            'where': {'ilike': ['A', {"literal": "%20%"}]},
+            'select': {'value': 'a'}
+        }
+        self.assertEqual(result, expected)
+
+    def test_not_ilike_in_where(self):
+        result = parse("select a from table1 where A not ilike '%20%'")
+        expected = {
+            'from': 'table1',
+            'where': {'nilike': ['A', {"literal": "%20%"}]},
+            'select': {'value': 'a'}
+        }
+        self.assertEqual(result, expected)
+
     def test_like_in_select(self):
         result = parse("select case when A like 'bb%' then 1 else 0 end as bb from table1")
         expected = {
@@ -323,6 +341,35 @@ class TestSimple(TestCase):
             'from': 'trade',
             'where': {"and": [
                 {"like": ["school", {"literal": "%shool"}]},
+                {"eq": ["name", {"literal": "abc"}]},
+                {"in": ["id", {"literal": ["1", "2"]}]}
+            ]},
+            'select': "*"
+        }
+        self.assertEqual(result, expected)
+
+    def test_ilike_in_select(self):
+        result = parse("select case when A ilike 'bb%' then 1 else 0 end as bb from table1")
+        expected = {
+            'from': 'table1',
+            'select': {'name': 'bb', 'value': {"case": [{"when": {"ilike": ["A", {"literal": "bb%"}]}, "then": 1}, 0]}}
+        }
+        self.assertEqual(result, expected)
+
+    def test_not_ilike_in_select(self):
+        result = parse("select case when A not ilike 'bb%' then 1 else 0 end as bb from table1")
+        expected = {
+            'from': 'table1',
+            'select': {'name': 'bb', 'value': {"case": [{"when": {"nilike": ["A", {"literal": "bb%"}]}, "then": 1}, 0]}}
+        }
+        self.assertEqual(result, expected)
+
+    def test_ilike_from_pr16(self):
+        result = parse("select * from trade where school ILIKE '%shool' and name='abc' and id IN ('1','2')")
+        expected = {
+            'from': 'trade',
+            'where': {"and": [
+                {"ilike": ["school", {"literal": "%shool"}]},
                 {"eq": ["name", {"literal": "abc"}]},
                 {"in": ["id", {"literal": ["1", "2"]}]}
             ]},

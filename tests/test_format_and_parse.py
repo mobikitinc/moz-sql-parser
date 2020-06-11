@@ -164,6 +164,11 @@ class TestFormatAndParse(TestCase):
         expected_json = {'from': 'table1', 'where': {'like': ['A', {'literal': '%20%'}]}, 'select': {'value': 'a'}}
         self.verify_formatting(expected_sql, expected_json)
 
+    def test_ilike_in_where(self):
+        expected_sql = "select a from table1 where A ilike '%20%'"
+        expected_json = {'from': 'table1', 'where': {'ilike': ['A', {'literal': '%20%'}]}, 'select': {'value': 'a'}}
+        self.verify_formatting(expected_sql, expected_json)
+
     def test_like_in_select(self):
         expected_sql = "select case when A like 'bb%' then 1 else 0 end as bb from table1"
         expected_json = {'from': 'table1', 'select': {'name': 'bb', 'value': {
@@ -196,6 +201,13 @@ from benn.college_football_players
                     {'in': ['id', {'literal': ['1', '2']}]}]}, 'select': '*'}
         self.verify_formatting(expected_sql, expected_json)
 
+    def test_ilike_from_pr16(self):
+        expected_sql = "select * from trade where school ILIKE '%shool' and name='abc' and id IN ('1','2')"
+        expected_json = {'from': 'trade', 'where': {
+            'and': [{'ilike': ['school', {'literal': '%shool'}]}, {'eq': ['name', {'literal': 'abc'}]},
+                    {'in': ['id', {'literal': ['1', '2']}]}]}, 'select': '*'}
+        self.verify_formatting(expected_sql, expected_json)
+
     def test_in_expression(self):
         expected_sql = "select * from task where repo.branch.name in ('try', 'mozilla-central')"
         expected_json = {'from': 'task', 'select': '*',
@@ -219,6 +231,11 @@ from benn.college_football_players
     def test_pr19(self):
         expected_sql = "select empid from emp where ename like 's%' "
         expected_json = {'from': 'emp', 'where': {'like': ['ename', {'literal': 's%'}]}, 'select': {'value': 'empid'}}
+        self.verify_formatting(expected_sql, expected_json)
+
+    def test_pr19_ilike(self):
+        expected_sql = "select empid from emp where ename ilike 's%' "
+        expected_json = {'from': 'emp', 'where': {'ilike': ['ename', {'literal': 's%'}]}, 'select': {'value': 'empid'}}
         self.verify_formatting(expected_sql, expected_json)
 
     def test_001(self):

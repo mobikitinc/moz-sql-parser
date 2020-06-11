@@ -17,8 +17,8 @@ from pyparsing import Combine, Forward, Group, Keyword, Literal, Optional, Parse
 
 from moz_sql_parser.debugs import debug
 from moz_sql_parser.keywords import AND, AS, ASC, BETWEEN, CASE, COLLATE_NOCASE, CROSS_JOIN, DESC, ELSE, END, FROM, \
-    FULL_JOIN, FULL_OUTER_JOIN, GROUP_BY, HAVING, IN, INNER_JOIN, IS, IS_NOT, JOIN, LEFT_JOIN, LEFT_OUTER_JOIN, LIKE, \
-    LIMIT, NOT_BETWEEN, NOT_IN, NOT_LIKE, OFFSET, ON, OR, ORDER_BY, RESERVED, RIGHT_JOIN, RIGHT_OUTER_JOIN, SELECT, \
+    FULL_JOIN, FULL_OUTER_JOIN, GROUP_BY, HAVING, IN, INNER_JOIN, IS, IS_NOT, JOIN, LEFT_JOIN, LEFT_OUTER_JOIN, LIKE, ILIKE, \
+    LIMIT, NOT_BETWEEN, NOT_IN, NOT_LIKE, NOT_ILIKE, OFFSET, ON, OR, ORDER_BY, RESERVED, RIGHT_JOIN, RIGHT_OUTER_JOIN, SELECT, \
     THEN, UNION, UNION_ALL, USING, WHEN, WHERE, binary_ops, unary_ops, WITH
 
 ParserElement.enablePackrat()
@@ -62,7 +62,9 @@ KNOWN_OPS = [
     IS_NOT.setName("neq").setDebugActions(*debug),
     IS.setName("is").setDebugActions(*debug),
     LIKE.setName("like").setDebugActions(*debug),
+    ILIKE.setName("ilike").setDebugActions(*debug),
     NOT_LIKE.setName("nlike").setDebugActions(*debug),
+    NOT_ILIKE.setName("nilike").setDebugActions(*debug),
     AND.setName("and").setDebugActions(*debug),
     OR.setName("or").setDebugActions(*debug)
 ]
