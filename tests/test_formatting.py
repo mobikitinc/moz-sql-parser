@@ -195,6 +195,14 @@ class TestSimple(TestCase):
         expected = "SELECT COUNT(1) FROM mytable"
         self.assertEqual(result, expected)
 
+    def test_cast(self):
+        result = format({
+            "select": {"value": {"cast": {"value": 1, "as": "text"}}},
+            "from": "mytable",
+        })
+        expected = "SELECT CAST(1 AS text) FROM mytable"
+        self.assertEqual(result, expected)
+
     def test_order_by(self):
         result = format({
             "select": {"value": {"count": 1}},

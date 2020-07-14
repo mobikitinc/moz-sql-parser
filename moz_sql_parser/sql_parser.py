@@ -146,6 +146,19 @@ def to_case_call(instring, tokensStart, retTokens):
     return {"case": cases}
 
 
+def to_cast_call(instring, tokensStart, retTokens):
+    tok = retTokens
+    op = tok.op.lower()
+    op = unary_ops.get(op, op)
+
+    params = tok.params
+    if not params:
+        params = None
+    elif len(params) == 1:
+        params = params[0]
+    return {op: {'value': params, 'as': tok.type}}
+
+
 def to_when_call(instring, tokensStart, retTokens):
     tok = retTokens
     return {"when": tok.when, "then":tok.then}
@@ -264,6 +277,15 @@ call_function = (
         Literal(")").suppress()
 ).addParseAction(to_json_call).setDebugActions(*debug)
 
+cast_function = (
+        Keyword("cast", caseless=True)("op").setName("function name") +
+        Literal("(").suppress() +
+        (expr | ordered_sql)('params') +
+        Keyword("as", caseless=True) +
+        Word(alphanums)("type") +
+        Literal(")").suppress()
+).addParseAction(to_cast_call).setDebugActions(*debug)
+
 compound = (
     (Keyword("not", caseless=True)("op").setDebugActions(*debug) + expr("params")).addParseAction(to_json_call) |
     (Keyword("distinct", caseless=True)("op").setDebugActions(*debug) + expr("params")).addParseAction(to_json_call) |
@@ -276,6 +298,7 @@ compound = (
     (Literal("~")("op").setDebugActions(*debug) + expr("params")).addParseAction(to_json_call) |
     (Literal("-")("op").setDebugActions(*debug) + expr("params")).addParseAction(to_json_call) |
     sqlString.setName("string").setDebugActions(*debug) |
+    cast_function |
     call_function |
     ident.copy().setName("variable").setDebugActions(*debug)
 )

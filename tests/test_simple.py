@@ -229,6 +229,14 @@ class TestSimple(TestCase):
         }
         self.assertEqual(result, expected)
 
+    def test_cast(self):
+        result = parse("select cast(6 as text) from mytable")
+        expected = {
+            "select": {"value": {"cast": {"value": 6, "as": "text"}}},
+            "from": "mytable"
+        }
+        self.assertEqual(result, expected)
+
     def test_function_underscore(self):
         #               0         1         2
         #               0123456789012345678901234567890
