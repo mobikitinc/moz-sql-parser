@@ -186,6 +186,9 @@ class Formatter:
         if 'on' in json:
             return self._on(json)
 
+        if 'cast' in json:
+            return self._cast(json['cast'])
+
         if len(json) > 1:
             raise Exception('Operators should have only one key!')
         key, value = list(json.items())[0]
@@ -250,6 +253,10 @@ class Formatter:
                 parts.extend(['ELSE', self.dispatch(check)])
         parts.append('END')
         return ' '.join(parts)
+
+    def _cast(self, json):
+        print(json)
+        return 'CAST({0} AS {1})'.format(self.value(json), json['as'])
 
     def _literal(self, json):
         if isinstance(json, list):
