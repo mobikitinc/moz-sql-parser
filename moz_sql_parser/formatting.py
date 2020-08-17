@@ -232,7 +232,7 @@ class Formatter:
         if not valid.startswith('('):
             valid = '({0})'.format(valid)
 
-        return '{0} IN {1}'.format(json[0], valid)
+        return '{0} IN {1}'.format(self.dispatch(json[0]), valid)
 
     def _nin(self, json):
         valid = self.dispatch(json[1])
@@ -255,7 +255,6 @@ class Formatter:
         return ' '.join(parts)
 
     def _cast(self, json):
-        print(json)
         return 'CAST({0} AS {1})'.format(self.value(json), json['as'])
 
     def _literal(self, json):
