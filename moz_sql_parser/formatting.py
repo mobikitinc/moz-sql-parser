@@ -252,7 +252,7 @@ class Formatter:
     def _case(self, checks):
         parts = ['CASE']
         for check in checks:
-            if isinstance(check, dict):
+            if isinstance(check, dict) and 'then' in check:
                 parts.extend(['WHEN', self.dispatch(check['when'])])
                 parts.extend(['THEN', self.dispatch(check['then'])])
             else:

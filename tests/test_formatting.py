@@ -410,3 +410,16 @@ class TestSimple(TestCase):
             ]
         })
         self.assertEqual(result, expected)
+
+    def test_function_in_case(self):
+        expected = "SELECT CASE WHEN a IS NULL THEN 1 ELSE SOMETHING(y) END FROM t"
+        result = format({
+            'select': {'value':
+                {'case': [
+                    {'when': {'missing': 'a'}, 'then': 1},
+                    {'something': 'y'}
+                ]}
+            },
+            'from': 't'
+        })
+        self.assertEqual(result, expected)
